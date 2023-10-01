@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="csvFileReaderImpl" class="ru.otus.spring.dao.impl.CsvFileReaderImpl" />
+
+    <bean id="csvFileServiceImpl" class="ru.otus.spring.service.impl.CsvFileServiceImpl">
+        <constructor-arg index="0" ref="csvFileReaderImpl"/>
+    </bean>
+
+    <bean id="examinationServiceImpl" class="ru.otus.spring.service.impl.ExaminationServiceImpl">
+        <constructor-arg index="0" value="examination/questions.csv"/>
+        <constructor-arg index="1" ref="csvFileServiceImpl"/>
+    </bean>
+</beans>
