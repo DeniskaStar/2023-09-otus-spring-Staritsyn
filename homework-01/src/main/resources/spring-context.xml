@@ -4,14 +4,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <bean id="csvFileReaderImpl" class="ru.otus.spring.dao.impl.CsvFileReaderImpl" />
-
-    <bean id="csvFileServiceImpl" class="ru.otus.spring.service.impl.CsvFileServiceImpl">
-        <constructor-arg index="0" ref="csvFileReaderImpl"/>
+    <bean id="csvQuestionDao" class="ru.otus.spring.dao.impl.CsvQuestionDao">
+        <constructor-arg index="0" value="examination/questions.csv"/>
     </bean>
 
-    <bean id="examinationServiceImpl" class="ru.otus.spring.service.impl.ExaminationServiceImpl">
-        <constructor-arg index="0" value="examination/questions.csv"/>
-        <constructor-arg index="1" ref="csvFileServiceImpl"/>
+    <bean id="consoleIOService" class="ru.otus.spring.service.impl.ConsoleIOService" />
+
+    <bean id="csvQuestionService" class="ru.otus.spring.service.impl.CsvQuestionService">
+        <constructor-arg index="0" ref="csvQuestionDao"/>
+        <constructor-arg index="1" ref="consoleIOService"/>
     </bean>
 </beans>

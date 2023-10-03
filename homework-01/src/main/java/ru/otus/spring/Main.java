@@ -1,16 +1,14 @@
 package ru.otus.spring;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import ru.otus.spring.domain.Examination;
-import ru.otus.spring.service.ExaminationService;
+import ru.otus.spring.service.QuestionService;
 
 public class Main {
 
     public static void main(String[] args) {
         ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("spring-context.xml");
-        ExaminationService examinationService = context.getBean(ExaminationService.class);
+        QuestionService questionService = context.getBean(QuestionService.class);
 
-        Examination examination = examinationService.getExamination();
-        examinationService.printExamination(examination);
+        questionService.getAndPrintAll();
     }
 }

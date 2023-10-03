@@ -1,0 +1,4 @@
+question_id,question_text,answer_id,answer_text,answer_correct
+first,What is the capital of France?,1,London,0
+1,What is the capital of France?,2,Paris,true
+1,What is the capital of France?,3
