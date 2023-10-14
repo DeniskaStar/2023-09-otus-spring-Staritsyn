@@ -1,0 +1,6 @@
+question_text,answers(answer_text%answer_correct|other_answer...)
+What is the capital of France?;London%false|Paris%true|Berlin%false
+Which planet is known as the "Red Planet"?;Mars%true|Venus%false|Jupiter%false
+Who wrote the play "Romeo and Juliet"?;William Shakespeare%true|Charles Dickens%false|Jane Austen%false
+What is the largest mammal on Earth?;Giraffe%false|African elephant%false|Blue whale%true
+Which famous scientist is known for the theory of relativity?;Isaac Newton%false|Albert Einstein%true|Galileo Galilei%false
