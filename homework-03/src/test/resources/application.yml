@@ -1,0 +1,5 @@
+examination:
+  rightAnswersCountToPass: 3
+  locale: en_US
+  fileNameByLocaleTag:
+    en-US: examination/questions.csv
