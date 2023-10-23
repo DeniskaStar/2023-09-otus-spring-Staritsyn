@@ -22,7 +22,7 @@ import java.util.List;
 @Repository
 public class CsvQuestionDao implements QuestionDao {
 
-    private final ExaminationFileNameProvider config;
+    private final ExaminationFileNameProvider fileNameProvider;
 
     private final QuestionDtoToQuestionMapper questionDtoMapper;
 
@@ -39,7 +39,7 @@ public class CsvQuestionDao implements QuestionDao {
     }
 
     private String getExaminationFileName() {
-        return config.getExaminationFileName();
+        return fileNameProvider.getExaminationFileName();
     }
 
     private List<Question> getCsvValues(String fileName) {

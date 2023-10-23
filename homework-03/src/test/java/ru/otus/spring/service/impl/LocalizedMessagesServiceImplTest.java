@@ -12,10 +12,13 @@ import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class LocalizedMessagesServiceImplTest {
+
+    private static final String FIRST_NAME_MESSAGE_CODE = "Student.first.name";
 
     @Mock
     private LocaleConfig localeConfig;
@@ -31,11 +34,12 @@ public class LocalizedMessagesServiceImplTest {
         String expectedMessage = "Денис";
         Locale ruLocale = new Locale("ru");
         when(localeConfig.getLocale()).thenReturn(ruLocale);
-        when(messageSource.getMessage("Student.first.name", null, ruLocale)).thenReturn(expectedMessage);
+        when(messageSource.getMessage(FIRST_NAME_MESSAGE_CODE, null, ruLocale)).thenReturn(expectedMessage);
 
-        String actualMessage = localizedMessagesService.getMessage("Student.first.name", null);
+        String actualMessage = localizedMessagesService.getMessage(FIRST_NAME_MESSAGE_CODE, (Object[]) null);
 
         assertNotNull(actualMessage);
         assertThat(actualMessage).isEqualTo(expectedMessage);
+        verify(messageSource).getMessage(FIRST_NAME_MESSAGE_CODE, null, ruLocale);
     }
 }
