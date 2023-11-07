@@ -3,27 +3,27 @@ package ru.otus.spring.converter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.otus.spring.data.domain.Genre;
-import ru.otus.spring.dto.genre.GenreModel;
+import ru.otus.spring.dto.genre.GenreDto;
 
 @RequiredArgsConstructor
 @Component
 public class GenreMapper {
 
-    public GenreModel toModel(Genre genre) {
-        GenreModel genreModel = new GenreModel();
-        genreModel.setId(genre.getId());
-        genreModel.setName(genre.getName());
-        return genreModel;
+    public GenreDto toDto(Genre genre) {
+        GenreDto genreDto = new GenreDto();
+        genreDto.setId(genre.getId());
+        genreDto.setName(genre.getName());
+        return genreDto;
     }
 
-    public Genre toDao(GenreModel genreModel) {
+    public Genre toEntity(GenreDto genreDto) {
         Genre genre = new Genre();
-        genre.setId(genreModel.getId());
-        genre.setName(genreModel.getName());
+        genre.setId(genreDto.getId());
+        genre.setName(genreDto.getName());
         return genre;
     }
 
-    public String genreToString(GenreModel genre) {
+    public String genreToString(GenreDto genre) {
         return "Id: %d, Name: %s".formatted(genre.getId(), genre.getName());
     }
 }

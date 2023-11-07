@@ -4,9 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring.converter.AuthorMapper;
-import ru.otus.spring.data.domain.Author;
 import ru.otus.spring.data.repository.AuthorRepository;
-import ru.otus.spring.dto.author.AuthorModel;
+import ru.otus.spring.dto.author.AuthorDto;
 import ru.otus.spring.service.AuthorService;
 
 import java.util.List;
@@ -22,27 +21,22 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<AuthorModel> findAll() {
+    public List<AuthorDto> findAll() {
         return authorRepository.findAll().stream()
-                .map(authorMapper::toModel)
+                .map(authorMapper::toDto)
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<AuthorModel> findById(long id) {
+    public Optional<AuthorDto> findById(long id) {
         return authorRepository.findById(id)
-                .map(authorMapper::toModel);
+                .map(authorMapper::toDto);
     }
 
     @Override
     @Transactional
-    public AuthorModel save(AuthorModel authorModel) {
-        var savedAuthor = authorRepository.save(prepareAuthor(authorModel));
-        return authorMapper.toModel(savedAuthor);
-    }
-
-    private Author prepareAuthor(AuthorModel authorModel) {
-        return authorMapper.toDao(authorModel);
+    public AuthorDto create(AuthorDto authorDto) {
+        return authorMapper.toDto(authorRepository.save(authorMapper.toEntity(authorDto)));
     }
 }

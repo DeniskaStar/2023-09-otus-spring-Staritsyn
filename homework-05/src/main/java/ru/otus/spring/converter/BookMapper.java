@@ -3,9 +3,13 @@ package ru.otus.spring.converter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+import ru.otus.spring.data.domain.Author;
 import ru.otus.spring.data.domain.Book;
-import ru.otus.spring.dto.book.BookModel;
+import ru.otus.spring.data.domain.Genre;
+import ru.otus.spring.dto.book.BookCreateDto;
+import ru.otus.spring.dto.book.BookDto;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -16,33 +20,28 @@ public class BookMapper {
 
     private final GenreMapper genreMapper;
 
-    public BookModel toModel(Book book) {
-        BookModel bookModel = new BookModel();
-        bookModel.setId(book.getId());
-        bookModel.setTitle(book.getTitle());
+    public BookDto toDto(Book book) {
+        BookDto bookDto = new BookDto();
+        bookDto.setId(book.getId());
+        bookDto.setTitle(book.getTitle());
         if (book.getAuthor() != null) {
-            bookModel.setAuthor(authorMapper.toModel(book.getAuthor()));
+            bookDto.setAuthor(authorMapper.toDto(book.getAuthor()));
         }
         if (!CollectionUtils.isEmpty(book.getGenres())) {
-            bookModel.setGenres((book.getGenres().stream().map(genreMapper::toModel).toList()));
+            bookDto.setGenres((book.getGenres().stream().map(genreMapper::toDto).toList()));
         }
-        return bookModel;
+        return bookDto;
     }
 
-    public Book toDao(BookModel bookModel) {
+    public Book toEntity(BookCreateDto bookRequest, Author author, List<Genre> genres) {
         Book book = new Book();
-        book.setId(bookModel.getId());
-        book.setTitle(bookModel.getTitle());
-        if (bookModel.getAuthor() != null) {
-            book.setAuthor(authorMapper.toDao(bookModel.getAuthor()));
-        }
-        if (!CollectionUtils.isEmpty(bookModel.getGenres())) {
-            book.setGenres((bookModel.getGenres().stream().map(genreMapper::toDao).toList()));
-        }
+        book.setTitle(bookRequest.getTitle());
+        book.setAuthor(author);
+        book.setGenres(genres);
         return book;
     }
 
-    public String bookToString(BookModel book) {
+    public String bookToString(BookDto book) {
         var genresString = book.getGenres().stream()
                 .map(genreMapper::genreToString)
                 .map("{%s}"::formatted)

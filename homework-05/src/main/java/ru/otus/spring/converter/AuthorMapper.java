@@ -3,27 +3,27 @@ package ru.otus.spring.converter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.otus.spring.data.domain.Author;
-import ru.otus.spring.dto.author.AuthorModel;
+import ru.otus.spring.dto.author.AuthorDto;
 
 @RequiredArgsConstructor
 @Component
 public class AuthorMapper {
 
-    public AuthorModel toModel(Author author) {
-        AuthorModel authorModel = new AuthorModel();
-        authorModel.setId(author.getId());
-        authorModel.setFullName(author.getFullName());
-        return authorModel;
+    public AuthorDto toDto(Author author) {
+        AuthorDto authorDto = new AuthorDto();
+        authorDto.setId(author.getId());
+        authorDto.setFullName(author.getFullName());
+        return authorDto;
     }
 
-    public Author toDao(AuthorModel authorModel) {
+    public Author toEntity(AuthorDto authorDto) {
         Author author = new Author();
-        author.setId(authorModel.getId());
-        author.setFullName(authorModel.getFullName());
+        author.setId(authorDto.getId());
+        author.setFullName(authorDto.getFullName());
         return author;
     }
 
-    public String authorToString(AuthorModel author) {
+    public String authorToString(AuthorDto author) {
         return "Id: %d, FullName: %s".formatted(author.getId(), author.getFullName());
     }
 }

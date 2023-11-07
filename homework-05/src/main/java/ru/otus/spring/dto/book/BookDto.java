@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.otus.spring.dto.author.AuthorModel;
-import ru.otus.spring.dto.genre.GenreModel;
+import ru.otus.spring.dto.author.AuthorDto;
+import ru.otus.spring.dto.genre.GenreDto;
 
 import java.util.List;
 
@@ -13,13 +13,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BookModel {
+public class BookDto {
 
     private Long id;
 
     private String title;
 
-    private AuthorModel author;
+    private AuthorDto author;
 
-    private List<GenreModel> genres;
+    private List<GenreDto> genres;
 }

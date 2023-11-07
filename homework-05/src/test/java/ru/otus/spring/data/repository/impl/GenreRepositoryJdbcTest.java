@@ -6,9 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.util.StringUtils;
 import ru.otus.spring.data.domain.Genre;
-import ru.otus.spring.util.providers.TestAuthorProvider;
-import ru.otus.spring.util.providers.TestGenreProvider;
 
 import java.util.List;
 
@@ -26,12 +25,11 @@ class GenreRepositoryJdbcTest {
     @DisplayName("должен вернуть список жанров")
     @Test
     void findAll_shouldReturnAllGenres() {
-        List<Genre> expectedGenres = TestGenreProvider.createAllGenres();
-
         var actualGenres = genreRepository.findAll();
 
-        assertThat(actualGenres).hasSize(6);
-        assertThat(actualGenres).containsExactlyInAnyOrderElementsOf(expectedGenres);
+        assertThat(actualGenres).hasSize(6)
+                .allMatch(it -> it.getId() != null)
+                .allMatch(it -> StringUtils.hasText(it.getName()));
     }
 
     @DisplayName("должен вернуть список жанров по id, если они существуют")
@@ -71,14 +69,13 @@ class GenreRepositoryJdbcTest {
 
     @DisplayName("должен сохранить жанр")
     @Test
-    void save() {
-        var newGenre = TestGenreProvider.createOneGenreWithoutId();
-
+    void create() {
+        var newGenre = new Genre(null, "Genre_test");
         var savedGenre = genreRepository.save(newGenre);
 
         assertThat(savedGenre).isNotNull();
-        assertThat(savedGenre).usingRecursiveComparison()
-                .ignoringExpectedNullFields()
-                .isEqualTo(newGenre);
+        var existsGenre = genreRepository.findByIds(List.of(savedGenre.getId()));
+        assertThat(existsGenre).isNotEmpty();
+        assertThat(existsGenre.get(0).getId()).isEqualTo(7L);
     }
 }

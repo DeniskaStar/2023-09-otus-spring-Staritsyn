@@ -14,7 +14,6 @@ import ru.otus.spring.exception.InvalidOperationException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,11 +31,10 @@ public class AuthorRepositoryJdbc implements AuthorRepository {
 
     @Override
     public Optional<Author> findById(long id) {
-        Map<String, Object> params = Collections.singletonMap("id", id);
         try {
             var author = jdbcOperations.queryForObject("""
                     SELECT id, full_name FROM authors WHERE id = :id
-                    """, params, new AuthorRowMapper());
+                    """, Map.of("id", id), new AuthorRowMapper());
             return Optional.ofNullable(author);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();

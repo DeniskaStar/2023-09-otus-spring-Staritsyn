@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.spring.converter.GenreMapper;
-import ru.otus.spring.dto.genre.GenreModel;
+import ru.otus.spring.dto.genre.GenreDto;
 import ru.otus.spring.service.GenreService;
 
 import java.util.stream.Collectors;
@@ -27,19 +27,19 @@ public class GenreCommands {
     @ShellMethod(value = "Insert genre", key = "gins")
     public String insertGenre(String name) {
         var genreRequest = prepareGenre(null, name);
-        var savedGenre = genreService.save(genreRequest);
+        var savedGenre = genreService.create(genreRequest);
         return genreConverter.genreToString(savedGenre);
     }
 
     @ShellMethod(value = "Update author", key = "gupd")
     public String updateGenre(long id, String name) {
         var genreRequest = prepareGenre(id, name);
-        var savedGenre = genreService.save(genreRequest);
+        var savedGenre = genreService.create(genreRequest);
         return genreConverter.genreToString(savedGenre);
     }
 
-    private GenreModel prepareGenre(Long id, String name) {
-        return GenreModel.builder()
+    private GenreDto prepareGenre(Long id, String name) {
+        return GenreDto.builder()
                 .id(id)
                 .name(name)
                 .build();

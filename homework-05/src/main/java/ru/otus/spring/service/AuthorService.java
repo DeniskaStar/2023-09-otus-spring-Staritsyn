@@ -1,15 +1,15 @@
 package ru.otus.spring.service;
 
-import ru.otus.spring.dto.author.AuthorModel;
+import ru.otus.spring.dto.author.AuthorDto;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface AuthorService {
 
-    List<AuthorModel> findAll();
+    List<AuthorDto> findAll();
 
-    Optional<AuthorModel> findById(long id);
+    Optional<AuthorDto> findById(long id);
 
-    AuthorModel save(AuthorModel authorModel);
+    AuthorDto create(AuthorDto authorDto);
 }

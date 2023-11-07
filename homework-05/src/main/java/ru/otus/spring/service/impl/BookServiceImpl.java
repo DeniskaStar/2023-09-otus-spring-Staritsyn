@@ -5,15 +5,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring.converter.BookMapper;
 import ru.otus.spring.data.domain.Book;
+import ru.otus.spring.data.domain.Genre;
+import ru.otus.spring.data.repository.AuthorRepository;
 import ru.otus.spring.data.repository.BookRepository;
-import ru.otus.spring.dto.author.AuthorModel;
-import ru.otus.spring.dto.book.BookModel;
-import ru.otus.spring.dto.book.BookRequestModel;
-import ru.otus.spring.dto.genre.GenreModel;
-import ru.otus.spring.exception.EntityByIdNotFoundException;
-import ru.otus.spring.service.AuthorService;
+import ru.otus.spring.data.repository.GenreRepository;
+import ru.otus.spring.dto.book.BookCreateDto;
+import ru.otus.spring.dto.book.BookDto;
+import ru.otus.spring.dto.book.BookUpdateDto;
+import ru.otus.spring.exception.NotFoundException;
 import ru.otus.spring.service.BookService;
-import ru.otus.spring.service.GenreService;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,32 +25,40 @@ public class BookServiceImpl implements BookService {
 
     private final BookRepository bookRepository;
 
-    private final AuthorService authorService;
+    private final AuthorRepository authorRepository;
 
-    private final GenreService genreService;
+    private final GenreRepository genreRepository;
 
     private final BookMapper bookMapper;
 
     @Override
     @Transactional(readOnly = true)
-    public List<BookModel> findAll() {
+    public List<BookDto> findAll() {
         return bookRepository.findAll().stream()
-                .map(bookMapper::toModel)
+                .map(bookMapper::toDto)
                 .toList();
     }
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<BookModel> findById(long id) {
+    public Optional<BookDto> findById(long id) {
         return bookRepository.findById(id)
-                .map(bookMapper::toModel);
+                .map(bookMapper::toDto);
     }
 
     @Override
     @Transactional
-    public BookModel save(BookRequestModel bookRequest) {
-        Book savedBook = bookRepository.save(prepareBook(bookRequest));
-        return bookMapper.toModel(savedBook);
+    public BookDto create(BookCreateDto createBook) {
+        var savedBook = bookRepository.save(prepareBookToCreate(createBook));
+        return bookMapper.toDto(savedBook);
+    }
+
+    @Override
+    @Transactional
+    public BookDto update(BookUpdateDto updateBook) {
+        validateExistsBook(updateBook);
+        var updatedBook = bookRepository.save(prepareBookToUpdate(updateBook));
+        return bookMapper.toDto(updatedBook);
     }
 
     @Override
@@ -59,28 +67,32 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
     }
 
-    private Book prepareBook(BookRequestModel bookRequest) {
-        var author = findAuthorOfBook(bookRequest.getAuthorId());
-        var genres = findGenresOfBook(bookRequest.getGenreIds());
+    private Book prepareBookToCreate(BookCreateDto book) {
+        var author = authorRepository.findById(book.getAuthorId())
+                .orElseThrow(() -> new NotFoundException("Author [id: %d] not found".formatted(book.getAuthorId())));
+        var genres = findGenresOfBook(book.getGenreIds());
 
-        return bookMapper.toDao(BookModel.builder()
-                .id(bookRequest.getId())
-                .title(bookRequest.getTitle())
-                .author(author)
-                .genres(genres)
-                .build());
+        return bookMapper.toEntity(book, author, genres);
     }
 
-    private AuthorModel findAuthorOfBook(long authorId) {
-        return authorService.findById(authorId)
-                .orElseThrow(() -> new EntityByIdNotFoundException("Author [id: %d] not found".formatted(authorId)));
-    }
-
-    private List<GenreModel> findGenresOfBook(Collection<Long> genreIds) {
-        var genres = genreService.findByIds(genreIds);
+    private List<Genre> findGenresOfBook(Collection<Long> genreIds) {
+        var genres = genreRepository.findByIds(genreIds);
         if (genres.isEmpty()) {
-            throw new EntityByIdNotFoundException("Genres [ids: %s] not found".formatted(genreIds));
+            throw new NotFoundException("Genres [ids: %s] not found".formatted(genreIds));
         }
         return genres;
+    }
+
+    private void validateExistsBook(BookUpdateDto updateBook) {
+        var existsBook = findById(updateBook.getId());
+        if (existsBook.isEmpty()) {
+            throw new NotFoundException("Book [id: %d] not found".formatted(updateBook.getId()));
+        }
+    }
+
+    private Book prepareBookToUpdate(BookUpdateDto updateBook) {
+        var book = prepareBookToCreate(updateBook);
+        book.setId(updateBook.getId());
+        return book;
     }
 }

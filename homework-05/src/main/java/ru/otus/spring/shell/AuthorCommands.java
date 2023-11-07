@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.spring.converter.AuthorMapper;
-import ru.otus.spring.dto.author.AuthorModel;
+import ru.otus.spring.dto.author.AuthorDto;
 import ru.otus.spring.service.AuthorService;
 
 import java.util.stream.Collectors;
@@ -34,19 +34,19 @@ public class AuthorCommands {
     @ShellMethod(value = "Insert author", key = "ains")
     public String insertAuthor(String fullName) {
         var authorRequest = prepareAuthor(null, fullName);
-        var savedAuthor = authorService.save(authorRequest);
+        var savedAuthor = authorService.create(authorRequest);
         return authorConverter.authorToString(savedAuthor);
     }
 
     @ShellMethod(value = "Update author", key = "aupd")
     public String updateAuthor(long id, String fullName) {
         var authorRequest = prepareAuthor(id, fullName);
-        var savedAuthor = authorService.save(authorRequest);
+        var savedAuthor = authorService.create(authorRequest);
         return authorConverter.authorToString(savedAuthor);
     }
 
-    private AuthorModel prepareAuthor(Long id, String fullName) {
-        return AuthorModel.builder()
+    private AuthorDto prepareAuthor(Long id, String fullName) {
+        return AuthorDto.builder()
                 .id(id)
                 .fullName(fullName)
                 .build();

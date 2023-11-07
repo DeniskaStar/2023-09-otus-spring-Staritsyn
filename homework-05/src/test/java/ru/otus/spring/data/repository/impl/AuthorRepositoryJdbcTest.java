@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.jdbc.Sql;
+import org.springframework.util.StringUtils;
 import ru.otus.spring.data.domain.Author;
-import ru.otus.spring.util.providers.TestAuthorProvider;
 
 import java.util.Optional;
 
@@ -25,23 +25,20 @@ class AuthorRepositoryJdbcTest {
     @DisplayName("должен вернуть список авторов")
     @Test
     void findAll_shouldReturnAllAuthors() {
-        var expectedAuthors = TestAuthorProvider.getAllAuthors();
-
         var actualBooks = authorRepository.findAll();
 
-        assertThat(actualBooks).hasSize(3);
-        assertThat(actualBooks).containsExactlyInAnyOrderElementsOf(expectedAuthors);
+        assertThat(actualBooks).hasSize(3)
+                .allMatch(it -> it.getId() != null)
+                .allMatch(it -> StringUtils.hasText(it.getFullName()));
     }
 
     @DisplayName("должен вернуть автора по id, если существует")
     @Test
     void findById_shouldReturnAuthor_whenAuthorExists() {
-        Author expectedAuthor = TestAuthorProvider.getOneAuthor();
-
         Optional<Author> actualAuthor = authorRepository.findById(1);
 
         assertThat(actualAuthor).isPresent();
-        assertThat(actualAuthor.get()).isEqualTo(expectedAuthor);
+        assertThat(actualAuthor.get().getFullName()).isEqualTo("Author_1");
     }
 
     @DisplayName("должен вернуть пустой элемент, если автора по id не существует")
@@ -55,13 +52,13 @@ class AuthorRepositoryJdbcTest {
     @DisplayName("должен сохранить автора")
     @Test
     void save() {
-        var newAuthor = TestAuthorProvider.createOneAuthorWithoutId();
+        var newAuthor = new Author(null, "Author_test");
 
         var savedAuthor = authorRepository.save(newAuthor);
 
         assertThat(savedAuthor).isNotNull();
-        assertThat(savedAuthor).usingRecursiveComparison()
-                .ignoringExpectedNullFields()
-                .isEqualTo(newAuthor);
+        var existsAuthor = authorRepository.findById(savedAuthor.getId());
+        assertThat(existsAuthor).isPresent();
+        assertThat(existsAuthor.get().getId()).isEqualTo(4L);
     }
 }

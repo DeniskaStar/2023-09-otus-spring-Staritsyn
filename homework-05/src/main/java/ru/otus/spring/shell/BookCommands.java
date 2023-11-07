@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.spring.converter.BookMapper;
-import ru.otus.spring.dto.book.BookRequestModel;
+import ru.otus.spring.dto.book.BookCreateDto;
+import ru.otus.spring.dto.book.BookUpdateDto;
 import ru.otus.spring.service.BookService;
 
 import java.util.List;
@@ -34,16 +35,16 @@ public class BookCommands {
 
     @ShellMethod(value = "Insert book", key = "bins")
     public String insertBook(String title, long authorId, List<Long> genreIds) {
-        var bookRequest = BookRequestModel.of(title, authorId, genreIds);
-        var savedBook = bookService.save(bookRequest);
+        var bookRequest = new BookCreateDto(title, authorId, genreIds);
+        var savedBook = bookService.create(bookRequest);
         return bookConverter.bookToString(savedBook);
     }
 
     @ShellMethod(value = "Update book", key = "bupd")
     public String updateBook(long id, String title, long authorId, List<Long> genresIds) {
-        var bookRequest = BookRequestModel.of(id, title, authorId, genresIds);
-        var savedBook = bookService.save(bookRequest);
-        return bookConverter.bookToString(savedBook);
+        var bookRequest = new BookUpdateDto(id, title, authorId, genresIds);
+        var updatedBook = bookService.update(bookRequest);
+        return bookConverter.bookToString(updatedBook);
     }
 
     @ShellMethod(value = "Delete book by id", key = "bdel")

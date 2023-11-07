@@ -1,8 +1,11 @@
-package ru.otus.spring.data.domain;
+package ru.otus.spring.data.repository.extractor.book;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.otus.spring.data.domain.Genre;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -11,5 +14,5 @@ public class BookGenreRelation {
 
     private Long bookId;
 
-    private Long genreId;
+    private List<Genre> genres;
 }
