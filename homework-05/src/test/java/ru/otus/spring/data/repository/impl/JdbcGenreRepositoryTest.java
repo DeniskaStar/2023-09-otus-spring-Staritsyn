@@ -15,12 +15,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Тест JDBC-репозитория для работы с жанра")
 @Sql({"classpath:sql/data.sql"})
-@Import(value = {GenreRepositoryJdbc.class})
+@Import(value = {JdbcGenreRepository.class})
 @JdbcTest
-class GenreRepositoryJdbcTest {
+class JdbcGenreRepositoryTest {
 
     @Autowired
-    private GenreRepositoryJdbc genreRepository;
+    private JdbcGenreRepository genreRepository;
 
     @DisplayName("должен вернуть список жанров")
     @Test

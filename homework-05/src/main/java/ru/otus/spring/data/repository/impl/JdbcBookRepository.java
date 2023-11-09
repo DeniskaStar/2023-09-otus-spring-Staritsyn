@@ -2,7 +2,6 @@ package ru.otus.spring.data.repository.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -12,9 +11,7 @@ import ru.otus.spring.data.domain.Author;
 import ru.otus.spring.data.domain.Book;
 import ru.otus.spring.data.domain.Genre;
 import ru.otus.spring.data.repository.BookRepository;
-import ru.otus.spring.data.repository.extractor.book.BookGenreRelation;
-import ru.otus.spring.data.repository.extractor.book.BookGenreResultSetExtractor;
-import ru.otus.spring.exception.InvalidOperationException;
+import ru.otus.spring.data.repository.extractor.BookGenreResultSetExtractor;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,7 +23,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
-public class BookRepositoryJdbc implements BookRepository {
+public class JdbcBookRepository implements BookRepository {
 
     private final NamedParameterJdbcOperations jdbcOperations;
 
@@ -45,8 +42,6 @@ public class BookRepositoryJdbc implements BookRepository {
             return Optional.of(book);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
-        } catch (IncorrectResultSizeDataAccessException e) {
-            throw new InvalidOperationException(e);
         }
     }
 
@@ -77,7 +72,7 @@ public class BookRepositoryJdbc implements BookRepository {
         mergeBooksInfo(books, bookGenreRelations);
     }
 
-    private List<BookGenreRelation> findBookGenreRelation() {
+    private Map<Long, List<Genre>> findBookGenreRelation() {
         return jdbcOperations.query("""
                 SELECT bg.book_id, bg.genre_id, g.name genre_name
                 FROM books_genres as bg
@@ -85,12 +80,10 @@ public class BookRepositoryJdbc implements BookRepository {
                 """, new BookGenreResultSetExtractor());
     }
 
-    private void mergeBooksInfo(List<Book> books, List<BookGenreRelation> bookGenreRelations) {
+    private void mergeBooksInfo(List<Book> books, Map<Long, List<Genre>> bookGenreRelations) {
         for (Book book : books) {
-            bookGenreRelations.stream()
-                    .filter(it -> it.getBookId().equals(book.getId()))
-                    .findFirst()
-                    .ifPresent(it -> book.setGenres(it.getGenres()));
+            var genres = bookGenreRelations.get(book.getId());
+            book.setGenres(genres);
         }
     }
 

@@ -19,12 +19,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Тест JDBC-репозитория для работы с книгами")
 @Sql({"classpath:sql/data.sql"})
-@Import({BookRepositoryJdbc.class, GenreRepositoryJdbc.class})
+@Import({JdbcBookRepository.class, JdbcGenreRepository.class})
 @JdbcTest
-class BookRepositoryJdbcTest {
+class JdbcBookRepositoryTest {
 
     @Autowired
-    private BookRepositoryJdbc bookRepository;
+    private JdbcBookRepository bookRepository;
 
     @DisplayName("должен вернуть список книг")
     @Test

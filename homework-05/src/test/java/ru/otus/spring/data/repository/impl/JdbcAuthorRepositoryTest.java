@@ -15,12 +15,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("Тест JDBC-репозитория для работы с авторами")
 @Sql({"classpath:sql/data.sql"})
-@Import(value = {AuthorRepositoryJdbc.class})
+@Import(value = {JdbcAuthorRepository.class})
 @JdbcTest
-class AuthorRepositoryJdbcTest {
+class JdbcAuthorRepositoryTest {
 
     @Autowired
-    private AuthorRepositoryJdbc authorRepository;
+    private JdbcAuthorRepository authorRepository;
 
     @DisplayName("должен вернуть список авторов")
     @Test

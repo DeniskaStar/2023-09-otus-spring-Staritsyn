@@ -15,9 +15,10 @@ import ru.otus.spring.dto.book.BookUpdateDto;
 import ru.otus.spring.exception.NotFoundException;
 import ru.otus.spring.service.BookService;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -70,17 +71,27 @@ public class BookServiceImpl implements BookService {
     private Book prepareBookToCreate(BookCreateDto book) {
         var author = authorRepository.findById(book.getAuthorId())
                 .orElseThrow(() -> new NotFoundException("Author [id: %d] not found".formatted(book.getAuthorId())));
-        var genres = findGenresOfBook(book.getGenreIds());
+        var genres = findGenres(book.getGenreIds());
 
         return bookMapper.toEntity(book, author, genres);
     }
 
-    private List<Genre> findGenresOfBook(Collection<Long> genreIds) {
+    private List<Genre> findGenres(Set<Long> genreIds) {
         var genres = genreRepository.findByIds(genreIds);
-        if (genres.isEmpty()) {
+        validateGenres(genres, genreIds);
+        return genres;
+    }
+
+    private void validateGenres(List<Genre> genres, Set<Long> genreIds) {
+        Set<Long> existGenreIds = genres.stream()
+                .map(Genre::getId)
+                .collect(Collectors.toSet());
+
+        boolean existsAllGenres = existGenreIds.containsAll(genreIds);
+
+        if (genreIds.isEmpty() || !existsAllGenres) {
             throw new NotFoundException("Genres [ids: %s] not found".formatted(genreIds));
         }
-        return genres;
     }
 
     private void validateExistsBook(BookUpdateDto updateBook) {

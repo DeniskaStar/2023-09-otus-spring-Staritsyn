@@ -2,7 +2,6 @@ package ru.otus.spring.data.repository.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcOperations;
@@ -10,7 +9,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.otus.spring.data.domain.Author;
 import ru.otus.spring.data.repository.AuthorRepository;
-import ru.otus.spring.exception.InvalidOperationException;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,7 +18,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
-public class AuthorRepositoryJdbc implements AuthorRepository {
+public class JdbcAuthorRepository implements AuthorRepository {
 
     private final NamedParameterJdbcOperations jdbcOperations;
 
@@ -38,8 +36,6 @@ public class AuthorRepositoryJdbc implements AuthorRepository {
             return Optional.ofNullable(author);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
-        } catch (IncorrectResultSizeDataAccessException e) {
-            throw new InvalidOperationException(e);
         }
     }
 

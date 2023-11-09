@@ -8,7 +8,7 @@ import ru.otus.spring.dto.book.BookCreateDto;
 import ru.otus.spring.dto.book.BookUpdateDto;
 import ru.otus.spring.service.BookService;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -34,14 +34,14 @@ public class BookCommands {
     }
 
     @ShellMethod(value = "Insert book", key = "bins")
-    public String insertBook(String title, long authorId, List<Long> genreIds) {
+    public String insertBook(String title, long authorId, Set<Long> genreIds) {
         var bookRequest = new BookCreateDto(title, authorId, genreIds);
         var savedBook = bookService.create(bookRequest);
         return bookConverter.bookToString(savedBook);
     }
 
     @ShellMethod(value = "Update book", key = "bupd")
-    public String updateBook(long id, String title, long authorId, List<Long> genresIds) {
+    public String updateBook(long id, String title, long authorId, Set<Long> genresIds) {
         var bookRequest = new BookUpdateDto(id, title, authorId, genresIds);
         var updatedBook = bookService.update(bookRequest);
         return bookConverter.bookToString(updatedBook);

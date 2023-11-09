@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RequiredArgsConstructor
 @Repository
-public class GenreRepositoryJdbc implements GenreRepository {
+public class JdbcGenreRepository implements GenreRepository {
 
     private final NamedParameterJdbcOperations jdbcOperations;
 
