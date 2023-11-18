@@ -8,6 +8,7 @@ import ru.otus.spring.data.repository.AuthorRepository;
 import ru.otus.spring.dto.author.AuthorCreateDto;
 import ru.otus.spring.dto.author.AuthorDto;
 import ru.otus.spring.dto.author.AuthorUpdateDto;
+import ru.otus.spring.exception.NotFoundException;
 import ru.otus.spring.service.AuthorService;
 
 import java.util.List;
@@ -46,7 +47,10 @@ public class AuthorServiceImpl implements AuthorService {
     @Override
     @Transactional
     public AuthorDto update(AuthorUpdateDto authorUpdateDto) {
-        var author = authorMapper.toEntity(AuthorDto.of(authorUpdateDto));
+        var author = authorRepository.findById(authorUpdateDto.getId())
+                .orElseThrow(() -> new NotFoundException("Author [id: %d] not found"
+                        .formatted(authorUpdateDto.getId())));
+        author.setFullName(authorUpdateDto.getFullName());
         return authorMapper.toDto(authorRepository.save(author));
     }
 

@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring.converter.BookMapper;
+import ru.otus.spring.data.domain.Author;
 import ru.otus.spring.data.domain.Book;
 import ru.otus.spring.data.domain.Genre;
 import ru.otus.spring.data.repository.AuthorRepository;
@@ -69,22 +70,28 @@ public class BookServiceImpl implements BookService {
     }
 
     private Book prepareBookToCreate(BookCreateDto book) {
-        var author = authorRepository.findById(book.getAuthorId())
-                .orElseThrow(() -> new NotFoundException("Author [id: %d] not found".formatted(book.getAuthorId())));
+        var author = findAuthor(book.getAuthorId());
         var genres = findGenres(book.getGenreIds());
-
         return bookMapper.toEntity(book, author, genres);
     }
 
+    private Author findAuthor(long authorId) {
+        return authorRepository.findById(authorId)
+                .orElseThrow(() -> new NotFoundException("Author [id: %d] not found".formatted(authorId)));
+    }
+
     private List<Genre> findGenres(Set<Long> genreIds) {
+        if (genreIds.isEmpty()) {
+            throw new NotFoundException("Genres [ids: %s] not founds".formatted(genreIds));
+        }
         var genres = genreRepository.findByIds(genreIds);
         validateGenres(genres, genreIds);
         return genres;
     }
 
     private void validateGenres(List<Genre> genres, Set<Long> genreIds) {
-        if (genreIds.isEmpty()) {
-            throw new NotFoundException("Genres [ids: %s] not founds".formatted(genreIds));
+        if (genreIds.size() != genres.size()) {
+            throw new NotFoundException("Genres [ids: %s] not all found".formatted(genreIds));
         }
 
         Set<Long> existGenreIds = genres.stream()

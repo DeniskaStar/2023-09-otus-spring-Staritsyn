@@ -14,21 +14,19 @@ import jakarta.persistence.NamedAttributeNode;
 import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.Setter;
 import org.hibernate.annotations.BatchSize;
 
 import java.util.List;
 
 @NamedEntityGraph(name = "book-author-entity-graph",
         attributeNodes = {@NamedAttributeNode("author")})
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = {"genres"})
-@ToString(exclude = "genres")
 @Entity
 @Table(name = "books")
 public class Book {
@@ -39,12 +37,12 @@ public class Book {
     @Column(name = "title")
     private String title;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id")
     private Author author;
 
     @BatchSize(size = 50)
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "books_genres",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id"))

@@ -2,5 +2,4 @@ spring:
   datasource:
     url: jdbc:h2:mem:maindb
   jpa:
-    hibernate:
-      ddl-auto: none
+    generate-ddl: false

@@ -11,6 +11,7 @@ import ru.otus.spring.data.domain.Book;
 import ru.otus.spring.data.repository.BookRepository;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.springframework.data.jpa.repository.EntityGraph.EntityGraphType.FETCH;
@@ -32,7 +33,8 @@ public class JpaBookRepository implements BookRepository {
 
     @Override
     public Optional<Book> findById(long id) {
-        return Optional.ofNullable(em.find(Book.class, id));
+        EntityGraph<?> entityGraph = em.getEntityGraph("book-author-entity-graph");
+        return Optional.ofNullable(em.find(Book.class, id, Map.of(FETCH.getKey(), entityGraph)));
     }
 
     @Override

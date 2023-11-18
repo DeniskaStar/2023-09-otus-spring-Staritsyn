@@ -11,26 +11,11 @@ import ru.otus.spring.dto.comment.CommentDto;
 @Component
 public class CommentMapper {
 
-    private final BookMapper bookMapper;
-
     public CommentDto toDto(Comment comment) {
         CommentDto commentDto = new CommentDto();
         commentDto.setId(comment.getId());
         commentDto.setText(comment.getText());
-        if (comment.getBook() != null) {
-            commentDto.setBook(bookMapper.toDto(comment.getBook()));
-        }
         return commentDto;
-    }
-
-    public Comment toEntity(CommentDto commentDto) {
-        Comment comment = new Comment();
-        comment.setId(commentDto.getId());
-        comment.setText(commentDto.getText());
-        if (commentDto.getBook() != null) {
-            comment.setBook(bookMapper.toEntity(commentDto.getBook()));
-        }
-        return comment;
     }
 
     public Comment toEntity(CommentCreateDto commentCreateDto, Book book) {
@@ -41,9 +26,8 @@ public class CommentMapper {
     }
 
     public String commentToString(CommentDto comment) {
-        return "Id: %d, Text: %s, Book: {%s}".formatted(
+        return "Id: %d, Text: %s".formatted(
                 comment.getId(),
-                comment.getText(),
-                bookMapper.bookToString(comment.getBook()));
+                comment.getText());
     }
 }

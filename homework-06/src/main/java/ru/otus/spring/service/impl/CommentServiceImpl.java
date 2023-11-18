@@ -51,9 +51,11 @@ public class CommentServiceImpl implements CommentService {
     @Override
     @Transactional
     public CommentDto update(CommentUpdateDto comment) {
-        validateExistComment(comment);
-        var updatedComment = commentRepository.save(prepareCommentToUpdate(comment));
-        return commentMapper.toDto(updatedComment);
+        var existComment = commentRepository.findById(comment.getId())
+                .orElseThrow(() -> new NotFoundException("Comment [id: %d] not found"));
+        validateBook(existComment, comment);
+        existComment.setText(comment.getText());
+        return commentMapper.toDto(existComment);
     }
 
     @Override
@@ -62,22 +64,16 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.deleteById(id);
     }
 
+    private void validateBook(Comment existComment, CommentUpdateDto comment) {
+        if (!existComment.getBook().getId().equals(comment.getBookId())) {
+            throw new IllegalArgumentException("BookId [id: %d] not equal to book from exist comment"
+                    .formatted(comment.getBookId()));
+        }
+    }
+
     private Comment prepareCommentToCreate(CommentCreateDto comment) {
         var book = bookRepository.findById(comment.getBookId())
                 .orElseThrow(() -> new NotFoundException("Book [id: %d] not found".formatted(comment.getBookId())));
         return commentMapper.toEntity(comment, book);
-    }
-
-    private Comment prepareCommentToUpdate(CommentUpdateDto updateComment) {
-        var comment = prepareCommentToCreate(updateComment);
-        comment.setId(updateComment.getId());
-        return comment;
-    }
-
-    private void validateExistComment(CommentUpdateDto comment) {
-        var existComment = findById(comment.getId());
-        if (existComment.isEmpty()) {
-            throw new NotFoundException("Comment [id: %d] not found".formatted(comment.getId()));
-        }
     }
 }

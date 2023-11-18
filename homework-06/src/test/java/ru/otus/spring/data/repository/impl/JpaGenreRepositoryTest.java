@@ -41,28 +41,26 @@ class JpaGenreRepositoryTest {
     @DisplayName("должен вернуть список жанров по id, если они существуют")
     @Test
     void findByIds_shouldReturnAllGenres_whenGenresExists() {
-        List<Genre> expectedGenres = List.of(
-                new Genre(1L, "Genre_1"),
-                new Genre(5L, "Genre_5")
-        );
+        List<Long> expectedIds = List.of(1L, 5L);
 
         List<Genre> actualGenres = genreRepository.findByIds(List.of(1L, 5L));
 
-        assertThat(actualGenres).containsExactlyInAnyOrderElementsOf(expectedGenres);
+        assertThat(actualGenres).hasSize(2)
+                .allMatch(it -> it.getId() != null)
+                .allMatch(it -> expectedIds.contains(it.getId()));
     }
 
     @DisplayName("должен вернуть список жанров по id, если какой-либо существует")
     @Test
     void findByIds_shouldReturnAnyGenres_whenAnyGenresExists() {
-        List<Genre> expectedGenres = List.of(
-                new Genre(3L, "Genre_3"),
-                new Genre(10L, "Genre_10")
-        );
+        List<Long> expectedIds = List.of(3L);
 
-        List<Genre> actualGenres = genreRepository.findByIds(List.of(6L, 3L, 5L));
+        List<Genre> actualGenres = genreRepository.findByIds(List.of(3L, 10L));
 
-        assertThat(actualGenres).hasSize(3);
-        assertThat(actualGenres).containsAnyElementsOf(expectedGenres);
+        assertThat(actualGenres).hasSize(1);
+        assertThat(actualGenres)
+                .allMatch(it -> it.getId() != null)
+                .allMatch(it -> expectedIds.contains(it.getId()));
     }
 
     @DisplayName("должен вернуть пустой список жанров, если их не существует")

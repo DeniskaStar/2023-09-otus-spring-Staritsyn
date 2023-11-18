@@ -11,6 +11,7 @@ import ru.otus.spring.data.repository.GenreRepository;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
@@ -23,6 +24,11 @@ public class JpaGenreRepository implements GenreRepository {
     public List<Genre> findAll() {
         TypedQuery<Genre> query = em.createQuery("select g from Genre g", Genre.class);
         return query.getResultList();
+    }
+
+    @Override
+    public Optional<Genre> findById(long id) {
+        return Optional.ofNullable(em.find(Genre.class, id));
     }
 
     @Override

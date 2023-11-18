@@ -20,20 +20,6 @@ public class BookMapper {
 
     private final GenreMapper genreMapper;
 
-    public Book toEntity(BookDto bookDto) {
-        Book book = new Book();
-        book.setId(bookDto.getId());
-        book.setTitle(bookDto.getTitle());
-        if (bookDto.getAuthor() != null) {
-            book.setAuthor(authorMapper.toEntity(bookDto.getAuthor()));
-        }
-        if (!CollectionUtils.isEmpty(bookDto.getGenres())) {
-            book.setGenres((bookDto.getGenres().stream().map(genreMapper::toEntity).toList()));
-        }
-        return book;
-    }
-
-
     public BookDto toDto(Book book) {
         BookDto bookDto = new BookDto();
         bookDto.setId(book.getId());
