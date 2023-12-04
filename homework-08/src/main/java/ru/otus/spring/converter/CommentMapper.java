@@ -1,0 +1,33 @@
+package ru.otus.spring.converter;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+import ru.otus.spring.data.domain.Book;
+import ru.otus.spring.data.domain.Comment;
+import ru.otus.spring.dto.comment.CommentCreateEditDto;
+import ru.otus.spring.dto.comment.CommentDto;
+
+@RequiredArgsConstructor
+@Component
+public class CommentMapper {
+
+    public CommentDto toDto(Comment comment) {
+        CommentDto commentDto = new CommentDto();
+        commentDto.setId(comment.getId());
+        commentDto.setText(comment.getText());
+        return commentDto;
+    }
+
+    public Comment toEntity(CommentCreateEditDto commentCreateDto, Book book) {
+        Comment comment = new Comment();
+        comment.setText(commentCreateDto.getText());
+        comment.setBook(book);
+        return comment;
+    }
+
+    public String commentToString(CommentDto comment) {
+        return "Id: %s, Text: %s".formatted(
+                comment.getId(),
+                comment.getText());
+    }
+}
