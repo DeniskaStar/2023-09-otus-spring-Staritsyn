@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import ru.otus.spring.data.domain.Book;
 import ru.otus.spring.data.domain.Comment;
-import ru.otus.spring.dto.comment.CommentCreateEditDto;
+import ru.otus.spring.dto.comment.CommentCreateDto;
 import ru.otus.spring.dto.comment.CommentDto;
 
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ public class CommentMapper {
         return commentDto;
     }
 
-    public Comment toEntity(CommentCreateEditDto commentCreateDto, Book book) {
+    public Comment toEntity(CommentCreateDto commentCreateDto, Book book) {
         Comment comment = new Comment();
         comment.setText(commentCreateDto.getText());
         comment.setBook(book);

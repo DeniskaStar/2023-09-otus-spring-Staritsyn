@@ -7,8 +7,9 @@ import ru.otus.spring.converter.CommentMapper;
 import ru.otus.spring.data.domain.Comment;
 import ru.otus.spring.data.repository.CommentRepository;
 import ru.otus.spring.data.repository.book.BookRepository;
-import ru.otus.spring.dto.comment.CommentCreateEditDto;
+import ru.otus.spring.dto.comment.CommentCreateDto;
 import ru.otus.spring.dto.comment.CommentDto;
+import ru.otus.spring.dto.comment.CommentUpdateDto;
 import ru.otus.spring.exception.NotFoundException;
 import ru.otus.spring.service.CommentService;
 
@@ -42,15 +43,15 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional
-    public CommentDto create(CommentCreateEditDto comment) {
+    public CommentDto create(CommentCreateDto comment) {
         var savedComment = commentRepository.save(prepareCommentToCreate(comment));
         return commentMapper.toDto(savedComment);
     }
 
     @Override
     @Transactional
-    public CommentDto update(String id, CommentCreateEditDto comment) {
-        var existComment = commentRepository.findById(id)
+    public CommentDto update(CommentUpdateDto comment) {
+        var existComment = commentRepository.findById(comment.getId())
                 .orElseThrow(() -> new NotFoundException("Comment [id: %s] not found"));
         validateBook(existComment, comment);
         existComment.setText(comment.getText());
@@ -63,14 +64,14 @@ public class CommentServiceImpl implements CommentService {
         commentRepository.deleteById(id);
     }
 
-    private void validateBook(Comment existComment, CommentCreateEditDto comment) {
+    private void validateBook(Comment existComment, CommentCreateDto comment) {
         if (!existComment.getBook().getId().equals(comment.getBookId())) {
             throw new IllegalArgumentException("BookId [id: %s] not equal to book from exist comment"
                     .formatted(comment.getBookId()));
         }
     }
 
-    private Comment prepareCommentToCreate(CommentCreateEditDto comment) {
+    private Comment prepareCommentToCreate(CommentCreateDto comment) {
         var book = bookRepository.findById(comment.getBookId())
                 .orElseThrow(() -> new NotFoundException("Book [id: %s] not found".formatted(comment.getBookId())));
         return commentMapper.toEntity(comment, book);

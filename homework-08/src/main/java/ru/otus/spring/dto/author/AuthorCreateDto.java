@@ -1,13 +1,15 @@
 package ru.otus.spring.dto.author;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthorCreateEditDto {
+public class AuthorCreateDto {
 
     private String fullName;
 }

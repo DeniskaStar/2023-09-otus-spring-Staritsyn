@@ -9,8 +9,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import ru.otus.spring.dto.author.AuthorDto;
-import ru.otus.spring.dto.book.BookCreateEditDto;
+import ru.otus.spring.dto.book.BookCreateDto;
 import ru.otus.spring.dto.book.BookDto;
+import ru.otus.spring.dto.book.BookUpdateDto;
 import ru.otus.spring.dto.comment.CommentDto;
 import ru.otus.spring.dto.genre.GenreDto;
 import ru.otus.spring.service.AuthorService;
@@ -78,7 +79,7 @@ class BookServiceImplIT {
     void save() {
         AuthorDto author = authorService.findAll().get(0);
         GenreDto genre = genreService.findAll().get(0);
-        BookCreateEditDto bookCreateRequest = new BookCreateEditDto("Test Title", author.getId(), Set.of(genre.getId()));
+        BookCreateDto bookCreateRequest = new BookCreateDto("Test Title", author.getId(), Set.of(genre.getId()));
 
         BookDto expectedBook = bookService.create(bookCreateRequest);
         Optional<BookDto> actualBook = bookService.findById(expectedBook.getId());
@@ -92,10 +93,10 @@ class BookServiceImplIT {
     void update() {
         AuthorDto author = authorService.findAll().get(0);
         GenreDto genre = genreService.findAll().get(0);
-        BookCreateEditDto bookCreateRequest = new BookCreateEditDto("Test Title", author.getId(), Set.of(genre.getId()));
         BookDto existBook = bookService.findAll().get(0);
+        BookUpdateDto bookUpdateRequest = new BookUpdateDto(existBook.getId(), "Test Title", author.getId(), Set.of(genre.getId()));
 
-        var actualBook = bookService.update(existBook.getId(), bookCreateRequest);
+        var actualBook = bookService.update(bookUpdateRequest);
 
         assertThat(actualBook).isNotNull();
         assertThat(actualBook.getId()).isEqualTo(existBook.getId());

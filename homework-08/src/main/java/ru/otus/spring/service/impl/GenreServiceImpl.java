@@ -6,8 +6,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.otus.spring.converter.GenreMapper;
 import ru.otus.spring.data.domain.Genre;
 import ru.otus.spring.data.repository.GenreRepository;
-import ru.otus.spring.dto.genre.GenreCreateEditDto;
+import ru.otus.spring.dto.genre.GenreCreateDto;
 import ru.otus.spring.dto.genre.GenreDto;
+import ru.otus.spring.dto.genre.GenreUpdateDto;
 import ru.otus.spring.exception.NotFoundException;
 import ru.otus.spring.service.GenreService;
 
@@ -49,19 +50,20 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional
-    public GenreDto create(GenreCreateEditDto genreCreateDto) {
+    public GenreDto create(GenreCreateDto genreCreateDto) {
         Genre genre = genreMapper.toEntity(genreCreateDto);
         return genreMapper.toDto(genreRepository.save(genre));
     }
 
     @Override
     @Transactional
-    public GenreDto update(String id, GenreCreateEditDto genreUpdateDto) {
-        return genreRepository.findById(id)
+    public GenreDto update(GenreUpdateDto genreUpdateDto) {
+        return genreRepository.findById(genreUpdateDto.getId())
                 .map(existGenre -> genreMapper.toEntity(genreUpdateDto, existGenre))
                 .map(genreRepository::save)
                 .map(genreMapper::toDto)
-                .orElseThrow(() -> new NotFoundException("Genre [id: %s] not found".formatted(id)));
+                .orElseThrow(() -> new NotFoundException("Genre [id: %s] not found"
+                        .formatted(genreUpdateDto.getId())));
     }
 
     @Override

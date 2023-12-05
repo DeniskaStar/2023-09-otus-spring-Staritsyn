@@ -8,8 +8,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.StringUtils;
 import ru.otus.spring.dto.book.BookDto;
-import ru.otus.spring.dto.comment.CommentCreateEditDto;
+import ru.otus.spring.dto.comment.CommentCreateDto;
 import ru.otus.spring.dto.comment.CommentDto;
+import ru.otus.spring.dto.comment.CommentUpdateDto;
 import ru.otus.spring.service.BookService;
 import ru.otus.spring.service.CommentService;
 
@@ -66,7 +67,7 @@ public class CommentServiceImplIT {
     @Test
     void create() {
         BookDto existBook = bookService.findAll().get(0);
-        CommentCreateEditDto commentCreateRequest = new CommentCreateEditDto("Test comment", existBook.getId());
+        CommentCreateDto commentCreateRequest = new CommentCreateDto("Test comment", existBook.getId());
 
         CommentDto expectedComment = commentService.create(commentCreateRequest);
         Optional<CommentDto> actualComment = commentService.findById(expectedComment.getId());
@@ -80,9 +81,9 @@ public class CommentServiceImplIT {
     void update() {
         BookDto existBook = bookService.findAll().get(0);
         CommentDto existComment = commentService.findAllByBookId(existBook.getId()).get(0);
-        CommentCreateEditDto expectedComment = new CommentCreateEditDto("Test comment", existBook.getId());
+        CommentUpdateDto expectedComment = new CommentUpdateDto(existComment.getId(), "Test comment", existBook.getId());
 
-        CommentDto actualComment = commentService.update(existComment.getId(), expectedComment);
+        CommentDto actualComment = commentService.update(expectedComment);
 
         assertThat(actualComment).isNotNull();
         assertThat(actualComment.getId()).isEqualTo(existComment.getId());

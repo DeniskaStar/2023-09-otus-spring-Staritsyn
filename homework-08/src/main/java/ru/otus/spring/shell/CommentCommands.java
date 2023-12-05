@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.spring.converter.CommentMapper;
-import ru.otus.spring.dto.comment.CommentCreateEditDto;
+import ru.otus.spring.dto.comment.CommentCreateDto;
+import ru.otus.spring.dto.comment.CommentUpdateDto;
 import ru.otus.spring.service.CommentService;
 
 import java.util.stream.Collectors;
@@ -33,15 +34,15 @@ public class CommentCommands {
 
     @ShellMethod(value = "Insert comment", key = "cins")
     public String insertComment(String text, String bookId) {
-        var commentCreateRequest = new CommentCreateEditDto(text, bookId);
+        var commentCreateRequest = new CommentCreateDto(text, bookId);
         var savedComment = commentService.create(commentCreateRequest);
         return commentConverter.commentToString(savedComment);
     }
 
     @ShellMethod(value = "Update comment", key = "cupd")
     public String updateComment(String id, String text, String bookId) {
-        var commentUpdateRequest = new CommentCreateEditDto(text, bookId);
-        var savedComment = commentService.update(id, commentUpdateRequest);
+        var commentUpdateRequest = new CommentUpdateDto(id, text, bookId);
+        var savedComment = commentService.update(commentUpdateRequest);
         return commentConverter.commentToString(savedComment);
     }
 

@@ -7,8 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.StringUtils;
-import ru.otus.spring.dto.author.AuthorCreateEditDto;
+import ru.otus.spring.dto.author.AuthorCreateDto;
 import ru.otus.spring.dto.author.AuthorDto;
+import ru.otus.spring.dto.author.AuthorUpdateDto;
 import ru.otus.spring.dto.book.BookDto;
 import ru.otus.spring.service.AuthorService;
 import ru.otus.spring.service.BookService;
@@ -43,7 +44,7 @@ public class AuthorServiceImplIT {
     @DisplayName("должен вернуть автора по id, если существует")
     @Test
     void findById_shouldReturnAuthor_whenAuthorExists() {
-        AuthorCreateEditDto createAuthorRequest = new AuthorCreateEditDto("Test Author");
+        AuthorCreateDto createAuthorRequest = new AuthorCreateDto("Test Author");
         AuthorDto createdAuthor = authorService.create(createAuthorRequest);
 
         Optional<AuthorDto> actualAuthor = authorService.findById(createdAuthor.getId());
@@ -63,7 +64,7 @@ public class AuthorServiceImplIT {
     @DisplayName("должен сохранить автора")
     @Test
     void save() {
-        AuthorCreateEditDto createAuthorRequest = new AuthorCreateEditDto("Test Author");
+        AuthorCreateDto createAuthorRequest = new AuthorCreateDto("Test Author");
         AuthorDto expectedAuthor = authorService.create(createAuthorRequest);
 
         var actualAuthor = authorService.findById(expectedAuthor.getId());
@@ -76,9 +77,9 @@ public class AuthorServiceImplIT {
     @Test
     void update() {
         AuthorDto existAuthor = authorService.findAll().get(0);
-        AuthorCreateEditDto updateAuthorRequest = new AuthorCreateEditDto("Dummy Author");
+        AuthorUpdateDto updateAuthorRequest = new AuthorUpdateDto(existAuthor.getId(), "Dummy Author");
 
-        AuthorDto actualAuthor = authorService.update(existAuthor.getId(), updateAuthorRequest);
+        AuthorDto actualAuthor = authorService.update(updateAuthorRequest);
 
         assertThat(actualAuthor).isNotNull();
         assertThat(actualAuthor.getId()).isEqualTo(existAuthor.getId());

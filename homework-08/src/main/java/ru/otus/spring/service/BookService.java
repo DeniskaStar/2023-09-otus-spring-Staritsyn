@@ -1,7 +1,8 @@
 package ru.otus.spring.service;
 
-import ru.otus.spring.dto.book.BookCreateEditDto;
+import ru.otus.spring.dto.book.BookCreateDto;
 import ru.otus.spring.dto.book.BookDto;
+import ru.otus.spring.dto.book.BookUpdateDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,9 +15,9 @@ public interface BookService {
 
     List<BookDto> findAllByAuthorId(String authorId);
 
-    BookDto create(BookCreateEditDto book);
+    BookDto create(BookCreateDto book);
 
-    BookDto update(String id, BookCreateEditDto book);
+    BookDto update(BookUpdateDto book);
 
     void deleteById(String id);
 }

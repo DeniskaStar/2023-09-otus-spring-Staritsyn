@@ -7,8 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.util.StringUtils;
-import ru.otus.spring.dto.genre.GenreCreateEditDto;
+import ru.otus.spring.dto.genre.GenreCreateDto;
 import ru.otus.spring.dto.genre.GenreDto;
+import ru.otus.spring.dto.genre.GenreUpdateDto;
 import ru.otus.spring.service.GenreService;
 
 import java.util.List;
@@ -38,7 +39,7 @@ public class GenreServiceImplIT {
     @DisplayName("должен найти жанр по id")
     @Test
     void findById_shouldReturnGenre_whenExists() {
-        GenreCreateEditDto genreCreateRequest = new GenreCreateEditDto("test genre");
+        GenreCreateDto genreCreateRequest = new GenreCreateDto("test genre");
         GenreDto expectedGenre = genreService.create(genreCreateRequest);
 
         Optional<GenreDto> actualGenre = genreService.findById(expectedGenre.getId());
@@ -60,9 +61,9 @@ public class GenreServiceImplIT {
     @Test
     void update() {
         GenreDto existsGenre = genreService.findAll().get(0);
-        GenreCreateEditDto updateGenreRequest = new GenreCreateEditDto("test genre");
+        GenreUpdateDto updateGenreRequest = new GenreUpdateDto(existsGenre.getId(), "test genre");
 
-        var updatedGenre = genreService.update(existsGenre.getId(), updateGenreRequest);
+        var updatedGenre = genreService.update(updateGenreRequest);
 
         assertThat(updatedGenre).isNotNull();
         assertThat(updatedGenre.getId()).isEqualTo(existsGenre.getId());

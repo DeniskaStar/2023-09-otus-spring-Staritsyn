@@ -1,15 +1,19 @@
 package ru.otus.spring.dto.book;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.otus.spring.dto.author.AuthorDto;
 import ru.otus.spring.dto.genre.GenreDto;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookDto {
@@ -20,5 +24,5 @@ public class BookDto {
 
     private AuthorDto author;
 
-    private List<GenreDto> genres = new ArrayList<>();
+    private Set<GenreDto> genres = new LinkedHashSet<>();
 }

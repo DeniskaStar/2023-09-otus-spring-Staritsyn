@@ -10,15 +10,15 @@ import ru.otus.spring.data.domain.Genre;
 import ru.otus.spring.data.repository.AuthorRepository;
 import ru.otus.spring.data.repository.GenreRepository;
 import ru.otus.spring.data.repository.book.BookRepository;
-import ru.otus.spring.dto.book.BookCreateEditDto;
+import ru.otus.spring.dto.book.BookCreateDto;
 import ru.otus.spring.dto.book.BookDto;
+import ru.otus.spring.dto.book.BookUpdateDto;
 import ru.otus.spring.exception.NotFoundException;
 import ru.otus.spring.service.BookService;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -56,16 +56,16 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional
-    public BookDto create(BookCreateEditDto createBook) {
+    public BookDto create(BookCreateDto createBook) {
         var savedBook = bookRepository.save(prepareBookToCreate(createBook));
         return bookMapper.toDto(savedBook);
     }
 
     @Override
     @Transactional
-    public BookDto update(String id, BookCreateEditDto updateBook) {
-        validateExistsBook(id);
-        var updatedBook = bookRepository.save(prepareBookToUpdate(id, updateBook));
+    public BookDto update(BookUpdateDto updateBook) {
+        validateExistsBook(updateBook.getId());
+        var updatedBook = bookRepository.save(prepareBookToUpdate(updateBook));
         return bookMapper.toDto(updatedBook);
     }
 
@@ -75,7 +75,7 @@ public class BookServiceImpl implements BookService {
         bookRepository.deleteById(id);
     }
 
-    private Book prepareBookToCreate(BookCreateEditDto book) {
+    private Book prepareBookToCreate(BookCreateDto book) {
         var author = findAuthor(book.getAuthorId());
         var genres = findGenres(book.getGenreIds());
         return bookMapper.toEntity(book, author, genres);
@@ -90,25 +90,12 @@ public class BookServiceImpl implements BookService {
         if (genreIds.isEmpty()) {
             throw new NotFoundException("Genres [ids: %s] not founds".formatted(genreIds));
         }
-        List<Genre> genres = genreRepository.findByIdIn(genreIds);
-        validateGenres(genres, genreIds);
-        return genres;
-    }
 
-    private void validateGenres(List<Genre> genres, Set<String> genreIds) {
+        List<Genre> genres = genreRepository.findByIdIn(genreIds);
         if (genreIds.size() != genres.size()) {
             throw new NotFoundException("Genres [ids: %s] not all found".formatted(genreIds));
         }
-
-        Set<String> existGenreIds = genres.stream()
-                .map(Genre::getId)
-                .collect(Collectors.toSet());
-
-        boolean existsAllGenres = existGenreIds.containsAll(genreIds);
-
-        if (!existsAllGenres) {
-            throw new NotFoundException("Genres [ids: %s] not all found".formatted(genreIds));
-        }
+        return genres;
     }
 
     private void validateExistsBook(String id) {
@@ -118,9 +105,9 @@ public class BookServiceImpl implements BookService {
         }
     }
 
-    private Book prepareBookToUpdate(String id, BookCreateEditDto updateBook) {
+    private Book prepareBookToUpdate(BookUpdateDto updateBook) {
         var book = prepareBookToCreate(updateBook);
-        book.setId(id);
+        book.setId(updateBook.getId());
         return book;
     }
 }

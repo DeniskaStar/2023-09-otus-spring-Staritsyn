@@ -1,7 +1,8 @@
 package ru.otus.spring.service;
 
-import ru.otus.spring.dto.comment.CommentCreateEditDto;
+import ru.otus.spring.dto.comment.CommentCreateDto;
 import ru.otus.spring.dto.comment.CommentDto;
+import ru.otus.spring.dto.comment.CommentUpdateDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +13,9 @@ public interface CommentService {
 
     Optional<CommentDto> findById(String id);
 
-    CommentDto create(CommentCreateEditDto comment);
+    CommentDto create(CommentCreateDto comment);
 
-    CommentDto update(String id, CommentCreateEditDto comment);
+    CommentDto update(CommentUpdateDto comment);
 
     void deleteById(String id);
 }

@@ -4,7 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import ru.otus.spring.converter.BookMapper;
-import ru.otus.spring.dto.book.BookCreateEditDto;
+import ru.otus.spring.dto.book.BookCreateDto;
+import ru.otus.spring.dto.book.BookUpdateDto;
 import ru.otus.spring.service.BookService;
 
 import java.util.Set;
@@ -34,15 +35,15 @@ public class BookCommands {
 
     @ShellMethod(value = "Insert book", key = "bins")
     public String insertBook(String title, String authorId, Set<String> genreIds) {
-        var bookRequest = new BookCreateEditDto(title, authorId, genreIds);
+        var bookRequest = new BookCreateDto(title, authorId, genreIds);
         var savedBook = bookService.create(bookRequest);
         return bookConverter.bookToString(savedBook);
     }
 
     @ShellMethod(value = "Update book", key = "bupd")
     public String updateBook(String id, String title, String authorId, Set<String> genreIds) {
-        var bookRequest = new BookCreateEditDto(title, authorId, genreIds);
-        var updatedBook = bookService.update(id, bookRequest);
+        var bookRequest = new BookUpdateDto(id, title, authorId, genreIds);
+        var updatedBook = bookService.update(bookRequest);
         return bookConverter.bookToString(updatedBook);
     }
 

@@ -1,7 +1,8 @@
 package ru.otus.spring.service;
 
-import ru.otus.spring.dto.author.AuthorCreateEditDto;
+import ru.otus.spring.dto.author.AuthorCreateDto;
 import ru.otus.spring.dto.author.AuthorDto;
+import ru.otus.spring.dto.author.AuthorUpdateDto;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +13,9 @@ public interface AuthorService {
 
     Optional<AuthorDto> findById(String id);
 
-    AuthorDto create(AuthorCreateEditDto authorDto);
+    AuthorDto create(AuthorCreateDto author);
 
-    AuthorDto update(String id, AuthorCreateEditDto author);
+    AuthorDto update(AuthorUpdateDto author);
 
     void deleteById(String id);
 }
