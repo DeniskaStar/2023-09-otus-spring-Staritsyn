@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit book</title>
+</head>
+<body>
+
+<!--обновление-->
+<form th:action="@{/books/{id}/update(id=${book.id})}" th:object="${book}" method="post" >
+    <div>
+        <label for="title">Название книги:
+            <input id="title" type="text" name="title" th:value="*{title}"/>
+        </label>
+    </div>
+    <div>
+        <label for="author">Автор:
+            <select id="author" name="authorId">
+                <option th:each="author : ${authors}"
+                        th:value="${author.id}"
+                        th:selected="${author.id == book.author.id}"
+                        th:text="${author.fullName}">Author
+                </option>
+            </select>
+        </label>
+    </div>
+    <div>
+        <label for="genres">Жанры:
+            <input id="genres" type="checkbox" name="genreIds"
+                   th:each="genre : ${genres}"
+                   th:text="${genre.name}"
+                   th:value="${genre.id}"
+                   th:checked="${book.genres.contains(genre)}"/>
+        </label>
+    </div>
+    <button type="submit">Обновить</button>
+</form>
+
+<!--удаление-->
+<form th:action="@{/books/{id}/delete(id=${book.id})}" method="post">
+    <button type="submit">Удалить</button>
+</form>
+
+<!--вернуться на главную-->
+<form th:action="@{/books}" method="get">
+    <button type="submit">Вернуться на главную</button>
+</form>
+
+</body>
+</html>

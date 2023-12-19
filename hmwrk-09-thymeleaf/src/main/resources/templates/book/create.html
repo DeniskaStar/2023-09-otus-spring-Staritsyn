@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>Create book</title>
+</head>
+<body>
+<form th:action="@{/books}" th:object="${book}" method="post">
+    <div>
+        <label for="title">Введите название книги
+            <input id="title" type="text" th:field="*{title}">
+        </label>
+    </div>
+
+    <div>
+        <label for="author">Выберете автора:
+            <select id="author" name="authorId">
+                <option th:each="author : ${authors}"
+                        th:value="${author.id}"
+                        th:text="${author.fullName}">Author
+                </option>
+            </select>
+        </label>
+    </div>
+
+    <div>
+        <label for="genres">Выберете жанр:
+            <input id="genres" type="checkbox" name="genreIds"
+                   th:each="genre : ${genres}"
+                   th:text="${genre.name}"
+                   th:value="${genre.id}"/>
+        </label>
+    </div>
+    <button type="submit">Добавить книгу</button>
+</form>
+</body>
+</html>
