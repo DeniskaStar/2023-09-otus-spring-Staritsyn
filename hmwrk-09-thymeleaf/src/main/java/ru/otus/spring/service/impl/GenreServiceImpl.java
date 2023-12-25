@@ -13,7 +13,6 @@ import ru.otus.spring.service.GenreService;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -33,9 +32,10 @@ public class GenreServiceImpl implements GenreService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<GenreDto> findById(long id) {
+    public GenreDto findById(long id) {
         return genreRepository.findById(id)
-                .map(genreMapper::toDto);
+                .map(genreMapper::toDto)
+                .orElseThrow(() -> new NotFoundException("Genre [id: %d] not found".formatted(id)));
     }
 
 
@@ -50,18 +50,18 @@ public class GenreServiceImpl implements GenreService {
     @Override
     @Transactional
     public GenreDto create(GenreCreateDto genreCreateDto) {
-        var genre = genreMapper.toEntity(GenreDto.of(genreCreateDto));
+        var genre = genreMapper.toEntity(genreCreateDto);
         return genreMapper.toDto(genreRepository.save(genre));
     }
 
     @Override
     @Transactional
     public GenreDto update(GenreUpdateDto genreUpdateDto) {
-        var genre = genreRepository.findById(genreUpdateDto.getId())
+        var existingGenre = genreRepository.findById(genreUpdateDto.getId())
                 .orElseThrow(() -> new NotFoundException("Genre [id: %d] not found"
                         .formatted(genreUpdateDto.getId())));
-        genre.setName(genreUpdateDto.getName());
-        return genreMapper.toDto(genre);
+        genreMapper.copy(genreUpdateDto, existingGenre);
+        return genreMapper.toDto(existingGenre);
     }
 
     @Override

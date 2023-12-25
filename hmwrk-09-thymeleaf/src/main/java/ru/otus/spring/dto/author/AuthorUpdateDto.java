@@ -1,16 +1,14 @@
 package ru.otus.spring.dto.author;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class AuthorUpdateDto extends AuthorCreateDto {
-
+public class AuthorUpdateDto {
+    @NotNull
     private Long id;
 
-    public AuthorUpdateDto(Long id, String fullName) {
-        super(fullName);
-        this.id = id;
-    }
+    @NotBlank
+    private String fullName;
 }

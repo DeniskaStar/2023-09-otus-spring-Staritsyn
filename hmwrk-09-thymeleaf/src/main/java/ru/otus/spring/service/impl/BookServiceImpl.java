@@ -16,8 +16,8 @@ import ru.otus.spring.dto.book.BookUpdateDto;
 import ru.otus.spring.exception.NotFoundException;
 import ru.otus.spring.service.BookService;
 
+import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 @RequiredArgsConstructor
@@ -42,23 +42,26 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<BookDto> findById(long id) {
+    public BookDto findById(long id) {
         return bookRepository.findById(id)
-                .map(bookMapper::toDto);
+                .map(bookMapper::toDto)
+                .orElseThrow(() -> new NotFoundException("Book [id: %d] not found".formatted(id)));
     }
 
     @Override
     @Transactional
-    public BookDto create(BookCreateDto createBook) {
-        var savedBook = bookRepository.save(prepareBookToCreate(createBook));
+    public BookDto create(BookCreateDto bookCreateDto) {
+        var savedBook = bookRepository.save(prepareBookToCreate(bookCreateDto));
         return bookMapper.toDto(savedBook);
     }
 
     @Override
     @Transactional
-    public BookDto update(BookUpdateDto updateBook) {
-        validateExistsBook(updateBook);
-        var updatedBook = bookRepository.save(prepareBookToUpdate(updateBook));
+    public BookDto update(BookUpdateDto bookUpdateDto) {
+        Book existingBook = bookRepository.findById(bookUpdateDto.getId())
+                .orElseThrow(() -> new NotFoundException("Book [id: %d] not found"
+                        .formatted(bookUpdateDto.getId())));
+        var updatedBook = bookRepository.save(prepareBookToUpdate(bookUpdateDto, existingBook));
         return bookMapper.toDto(updatedBook);
     }
 
@@ -90,19 +93,12 @@ public class BookServiceImpl implements BookService {
         if (genreIds.size() != genres.size()) {
             throw new NotFoundException("Genres [ids: %s] not all found".formatted(genreIds));
         }
-        return genres;
+        return new HashSet<>(genres);
     }
 
-    private void validateExistsBook(BookUpdateDto updateBook) {
-        var existsBook = findById(updateBook.getId());
-        if (existsBook.isEmpty()) {
-            throw new NotFoundException("Book [id: %d] not found".formatted(updateBook.getId()));
-        }
-    }
-
-    private Book prepareBookToUpdate(BookUpdateDto updateBook) {
-        var book = prepareBookToCreate(updateBook);
-        book.setId(updateBook.getId());
-        return book;
+    private Book prepareBookToUpdate(BookUpdateDto updateBook, Book existingBook) {
+        var author = findAuthor(updateBook.getAuthorId());
+        var genres = findGenres(updateBook.getGenreIds());
+        return bookMapper.toEntity(existingBook, updateBook, author, genres);
     }
 }

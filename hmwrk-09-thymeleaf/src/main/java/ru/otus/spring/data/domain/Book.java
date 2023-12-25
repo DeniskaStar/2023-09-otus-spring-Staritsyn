@@ -10,14 +10,24 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.Set;
 
+@NamedEntityGraph(name = "Book.authors",
+        attributeNodes = {@NamedAttributeNode("author")})
+@NamedEntityGraph(name = "Book.authors-genres",
+        attributeNodes = {
+                @NamedAttributeNode("author"),
+                @NamedAttributeNode("genres")})
 @Getter
 @Setter
 @AllArgsConstructor
@@ -36,6 +46,7 @@ public class Book {
     @JoinColumn(name = "author_id")
     private Author author;
 
+    @Fetch(value = FetchMode.SUBSELECT)
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "books_genres",
             joinColumns = @JoinColumn(name = "book_id"),

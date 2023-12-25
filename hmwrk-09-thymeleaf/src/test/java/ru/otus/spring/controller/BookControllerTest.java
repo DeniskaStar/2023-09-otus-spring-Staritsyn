@@ -7,12 +7,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import ru.otus.spring.dto.book.BookDto;
+import ru.otus.spring.exception.NotFoundException;
 import ru.otus.spring.service.AuthorService;
 import ru.otus.spring.service.BookService;
 import ru.otus.spring.service.CommentService;
 import ru.otus.spring.service.GenreService;
-
-import java.util.Optional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -47,28 +46,30 @@ public class BookControllerTest {
         mockMvc.perform(get("/books"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("books"))
-                .andExpect(view().name("book/books"));
+                .andExpect(view().name("book/list"));
     }
 
     @Test
     public void testFindByIdWhenGetRequestToBookWithExistingIdThenReturnBookView() throws Exception {
-        Mockito.when(bookService.findById(1)).thenReturn(Optional.of(new BookDto()));
+        Mockito.when(bookService.findById(1)).thenReturn(new BookDto());
 
         mockMvc.perform(get("/books/1"))
                 .andExpect(status().isOk())
                 .andExpect(model().attributeExists("book"))
-                .andExpect(view().name("book/book"));
+                .andExpect(view().name("book/edit"));
     }
 
     @Test
     public void testFindByIdWhenGetRequestToBookWithNonExistingIdThenReturnNotFound() throws Exception {
+        Mockito.when(bookService.findById(999)).thenThrow(new NotFoundException(""));
+
         mockMvc.perform(get("/books/999"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void testFindCommentsByIdWhenGetRequestToBookWithExistingIdThenReturnCommentsView() throws Exception {
-        Mockito.when(bookService.findById(1)).thenReturn(Optional.of(new BookDto()));
+        Mockito.when(bookService.findById(1)).thenReturn(new BookDto());
 
         mockMvc.perform(get("/books/1/comments"))
                 .andExpect(status().isOk())
@@ -78,6 +79,8 @@ public class BookControllerTest {
 
     @Test
     public void testFindCommentsByIdWhenGetRequestToBookWithNonExistingIdThenReturnNotFound() throws Exception {
+        Mockito.when(bookService.findById(999)).thenThrow(new NotFoundException(""));
+
         mockMvc.perform(get("/books/999/comments"))
                 .andExpect(status().isNotFound());
     }

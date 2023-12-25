@@ -2,7 +2,9 @@ package ru.otus.spring.converter;
 
 import org.springframework.stereotype.Component;
 import ru.otus.spring.data.domain.Author;
+import ru.otus.spring.dto.author.AuthorCreateDto;
 import ru.otus.spring.dto.author.AuthorDto;
+import ru.otus.spring.dto.author.AuthorUpdateDto;
 
 @Component
 public class AuthorMapper {
@@ -14,10 +16,13 @@ public class AuthorMapper {
         return authorDto;
     }
 
-    public Author toEntity(AuthorDto authorDto) {
+    public Author toEntity(AuthorCreateDto authorCreateDto) {
         Author author = new Author();
-        author.setId(authorDto.getId());
-        author.setFullName(authorDto.getFullName());
+        author.setFullName(authorCreateDto.getFullName());
         return author;
+    }
+
+    public void copy(AuthorUpdateDto authorUpdateDto, Author existingAuthor) {
+        existingAuthor.setFullName(authorUpdateDto.getFullName());
     }
 }

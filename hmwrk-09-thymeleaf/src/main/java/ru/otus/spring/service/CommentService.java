@@ -5,17 +5,16 @@ import ru.otus.spring.dto.comment.CommentDto;
 import ru.otus.spring.dto.comment.CommentUpdateDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface CommentService {
 
     List<CommentDto> findAllByBookId(long bookId);
 
-    Optional<CommentDto> findById(long id);
+    CommentDto findById(long id);
 
-    CommentDto create(CommentCreateDto comment);
+    CommentDto create(CommentCreateDto commentCreateDto);
 
-    CommentDto update(CommentUpdateDto comment);
+    CommentDto update(CommentUpdateDto commentUpdateDto);
 
     void deleteById(long id);
 }

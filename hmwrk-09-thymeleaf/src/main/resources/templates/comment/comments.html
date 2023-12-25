@@ -14,9 +14,9 @@
 <!--Добавление комментария-->
 <form th:action="@{/comments}" th:object="${newComment}" method="post">
     <div>
-        <label for="title">Введите комментарий
-            <input id="title" type="text" th:field="*{text}">
-        </label>
+        <label for="title">Введите комментарий</label>
+        <input id="title" type="text" th:field="*{text}">
+        <span style="color:red" th:if="${#fields.hasErrors('text')}" th:errors="*{text}">Comment error</span>
     </div>
     <input type="hidden" th:name="bookId" th:value="${book.id}">
     <button type="submit">Добавить комментарий</button>

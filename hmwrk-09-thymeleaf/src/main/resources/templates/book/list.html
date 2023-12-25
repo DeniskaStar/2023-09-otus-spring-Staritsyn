@@ -23,7 +23,7 @@
         <td th:text="${book.id}">1</td>
         <td th:text="${book.title}">Dummy book</td>
         <td>
-            <a th:href="@{/books/{id}(id=${book.id})}" href="book.html">Редактировать</a>
+            <a th:href="@{/books/{id}(id=${book.id})}" href="edit.html">Редактировать</a>
         </td>
         <td>
             <a th:href="@{/books/{id}/comments(id=${book.id})}">Список комментариев</a>

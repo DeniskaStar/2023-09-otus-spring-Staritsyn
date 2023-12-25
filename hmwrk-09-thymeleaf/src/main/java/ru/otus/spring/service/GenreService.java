@@ -6,19 +6,18 @@ import ru.otus.spring.dto.genre.GenreUpdateDto;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 
 public interface GenreService {
 
     List<GenreDto> findAll();
 
-    Optional<GenreDto> findById(long id);
+    GenreDto findById(long id);
 
     List<GenreDto> findByIds(Collection<Long> genreIds);
 
-    GenreDto create(GenreCreateDto genre);
+    GenreDto create(GenreCreateDto genreCreateDto);
 
-    GenreDto update(GenreUpdateDto genre);
+    GenreDto update(GenreUpdateDto genreUpdateDto);
 
     void deleteById(long id);
 }

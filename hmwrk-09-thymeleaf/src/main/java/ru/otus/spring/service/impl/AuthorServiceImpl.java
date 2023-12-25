@@ -12,7 +12,6 @@ import ru.otus.spring.exception.NotFoundException;
 import ru.otus.spring.service.AuthorService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -32,26 +31,27 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<AuthorDto> findById(long id) {
+    public AuthorDto findById(long id) {
         return authorRepository.findById(id)
-                .map(authorMapper::toDto);
+                .map(authorMapper::toDto)
+                .orElseThrow(() -> new NotFoundException("Author [id: %d] not found".formatted(id)));
     }
 
     @Override
     @Transactional
     public AuthorDto create(AuthorCreateDto authorCreateDto) {
-        var author = authorMapper.toEntity(AuthorDto.of(authorCreateDto));
+        var author = authorMapper.toEntity(authorCreateDto);
         return authorMapper.toDto(authorRepository.save(author));
     }
 
     @Override
     @Transactional
     public AuthorDto update(AuthorUpdateDto authorUpdateDto) {
-        var author = authorRepository.findById(authorUpdateDto.getId())
+        var existingAuthor = authorRepository.findById(authorUpdateDto.getId())
                 .orElseThrow(() -> new NotFoundException("Author [id: %d] not found"
                         .formatted(authorUpdateDto.getId())));
-        author.setFullName(authorUpdateDto.getFullName());
-        return authorMapper.toDto(author);
+        authorMapper.copy(authorUpdateDto, existingAuthor);
+        return authorMapper.toDto(existingAuthor);
     }
 
     @Override

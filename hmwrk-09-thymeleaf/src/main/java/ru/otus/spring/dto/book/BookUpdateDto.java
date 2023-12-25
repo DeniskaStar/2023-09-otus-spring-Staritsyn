@@ -1,18 +1,27 @@
 package ru.otus.spring.dto.book;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class BookUpdateDto extends BookCreateDto {
-
+@NoArgsConstructor
+@AllArgsConstructor
+public class BookUpdateDto {
+    @NotNull
     private Long id;
 
-    public BookUpdateDto(Long id, String title, Long authorId, Set<Long> genreIds) {
-        super(title, authorId, genreIds);
-        this.id = id;
-    }
+    @NotBlank
+    private String title;
+
+    @NotNull
+    private Long authorId;
+
+    @NotEmpty
+    private Set<Long> genreIds;
 }

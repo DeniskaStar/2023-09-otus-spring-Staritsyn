@@ -7,6 +7,7 @@ import ru.otus.spring.data.domain.Book;
 import ru.otus.spring.data.domain.Genre;
 import ru.otus.spring.dto.book.BookCreateDto;
 import ru.otus.spring.dto.book.BookDto;
+import ru.otus.spring.dto.book.BookUpdateDto;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -28,11 +29,18 @@ public class BookMapper {
         return bookDto;
     }
 
-    public Book toEntity(BookCreateDto bookRequest, Author author, Set<Genre> genres) {
+    public Book toEntity(BookCreateDto bookCreateDto, Author author, Set<Genre> genres) {
         Book book = new Book();
-        book.setTitle(bookRequest.getTitle());
+        book.setTitle(bookCreateDto.getTitle());
         book.setAuthor(author);
         book.setGenres(genres);
         return book;
+    }
+
+    public Book toEntity(Book existingBook, BookUpdateDto bookUpdateDto, Author author, Set<Genre> genres) {
+        existingBook.setTitle(bookUpdateDto.getTitle());
+        existingBook.setAuthor(author);
+        existingBook.setGenres(genres);
+        return existingBook;
     }
 }

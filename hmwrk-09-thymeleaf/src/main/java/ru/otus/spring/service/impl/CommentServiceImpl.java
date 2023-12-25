@@ -14,7 +14,6 @@ import ru.otus.spring.exception.NotFoundException;
 import ru.otus.spring.service.CommentService;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -36,26 +35,27 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public Optional<CommentDto> findById(long id) {
+    public CommentDto findById(long id) {
         return commentRepository.findById(id)
-                .map(commentMapper::toDto);
+                .map(commentMapper::toDto)
+                .orElseThrow(() -> new NotFoundException("Comment [id: %d] not found".formatted(id)));
     }
 
     @Override
     @Transactional
-    public CommentDto create(CommentCreateDto comment) {
-        var savedComment = commentRepository.save(prepareCommentToCreate(comment));
+    public CommentDto create(CommentCreateDto commentCreateDto) {
+        var savedComment = commentRepository.save(prepareCommentToCreate(commentCreateDto));
         return commentMapper.toDto(savedComment);
     }
 
     @Override
     @Transactional
-    public CommentDto update(CommentUpdateDto comment) {
-        var existComment = commentRepository.findById(comment.getId())
+    public CommentDto update(CommentUpdateDto commentUpdateDto) {
+        var existingComment = commentRepository.findById(commentUpdateDto.getId())
                 .orElseThrow(() -> new NotFoundException("Comment [id: %d] not found"));
-        validateBook(existComment, comment);
-        existComment.setText(comment.getText());
-        return commentMapper.toDto(existComment);
+        validateBook(existingComment, commentUpdateDto);
+        commentMapper.copy(commentUpdateDto, existingComment);
+        return commentMapper.toDto(existingComment);
     }
 
     @Override

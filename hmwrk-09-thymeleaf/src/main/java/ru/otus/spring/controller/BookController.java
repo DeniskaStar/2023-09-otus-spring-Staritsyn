@@ -1,15 +1,16 @@
 package ru.otus.spring.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.server.ResponseStatusException;
 import ru.otus.spring.dto.book.BookCreateDto;
+import ru.otus.spring.dto.book.BookDto;
 import ru.otus.spring.dto.book.BookUpdateDto;
 import ru.otus.spring.dto.comment.CommentCreateDto;
 import ru.otus.spring.service.AuthorService;
@@ -37,31 +38,25 @@ public class BookController {
     @GetMapping("/books")
     public String findAll(Model model) {
         model.addAttribute("books", bookService.findAll());
-        return "book/books";
+        return "book/list";
     }
 
     @GetMapping("/books/{id}")
     public String findById(@PathVariable("id") long id, Model model) {
-        return bookService.findById(id)
-                .map(book -> {
-                    model.addAttribute("book", book);
-                    model.addAttribute("authors", authorService.findAll());
-                    model.addAttribute("genres", genreService.findAll());
-                    return "book/book";
-                })
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        BookDto book = bookService.findById(id);
+        model.addAttribute("book", book);
+        model.addAttribute("authors", authorService.findAll());
+        model.addAttribute("genres", genreService.findAll());
+        return "book/edit";
     }
 
     @GetMapping("/books/{id}/comments")
     public String findCommentsById(@PathVariable("id") long id, Model model) {
-        return bookService.findById(id)
-                .map(book -> {
-                    model.addAttribute("comments", commentService.findAllByBookId(id));
-                    model.addAttribute("newComment", new CommentCreateDto());
-                    model.addAttribute("book", book);
-                    return "comment/comments";
-                })
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        BookDto book = bookService.findById(id);
+        model.addAttribute("comments", commentService.findAllByBookId(id));
+        model.addAttribute("newComment", new CommentCreateDto());
+        model.addAttribute("book", book);
+        return "comment/comments";
     }
 
     @GetMapping("/books/new")
@@ -73,13 +68,25 @@ public class BookController {
     }
 
     @PostMapping("/books")
-    public String create(@ModelAttribute BookCreateDto bookCreateDto) {
+    public String create(@Valid @ModelAttribute("book") BookCreateDto bookCreateDto,
+                         BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("authors", authorService.findAll());
+            model.addAttribute("genres", genreService.findAll());
+            return "book/create";
+        }
         bookService.create(bookCreateDto);
         return "redirect:/books";
     }
 
     @PostMapping("/books/{id}/update")
-    public String update(@PathVariable("id") long id, @ModelAttribute("book") BookUpdateDto bookUpdateDto, Model model) {
+    public String update(@PathVariable("id") long id, @Valid @ModelAttribute("book") BookUpdateDto bookUpdateDto,
+                         BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("authors", authorService.findAll());
+            model.addAttribute("genres", genreService.findAll());
+            return "book/edit_with_error";
+        }
         model.addAttribute("book", bookService.update(bookUpdateDto));
         return "redirect:/books/" + id;
     }

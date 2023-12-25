@@ -14,16 +14,4 @@ public class GenreDto {
     private Long id;
 
     private String name;
-
-    public static GenreDto of(GenreCreateDto genre) {
-        return GenreDto.builder()
-                .name(genre.getName())
-                .build();
-    }
-
-    public static GenreDto of(GenreUpdateDto genre) {
-        var genreDto = of((GenreCreateDto) genre);
-        genreDto.setId(genre.getId());
-        return genreDto;
-    }
 }

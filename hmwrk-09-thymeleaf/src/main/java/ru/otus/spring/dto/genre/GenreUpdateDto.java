@@ -1,16 +1,14 @@
 package ru.otus.spring.dto.genre;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class GenreUpdateDto extends GenreCreateDto {
-
+public class GenreUpdateDto {
+    @NotNull
     private Long id;
 
-    public GenreUpdateDto(Long id, String name) {
-        super(name);
-        this.id = id;
-    }
+    @NotBlank
+    private String name;
 }

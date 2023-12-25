@@ -5,13 +5,12 @@ import ru.otus.spring.dto.book.BookDto;
 import ru.otus.spring.dto.book.BookUpdateDto;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface BookService {
 
     List<BookDto> findAll();
 
-    Optional<BookDto> findById(long id);
+    BookDto findById(long id);
 
     BookDto create(BookCreateDto book);
 

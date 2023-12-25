@@ -1,16 +1,17 @@
 package ru.otus.spring.dto.comment;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
-public class CommentUpdateDto extends CommentCreateDto {
-
+public class CommentUpdateDto {
+    @NotNull
     private Long id;
 
-    public CommentUpdateDto(Long id, String text, Long bookId) {
-        super(text, bookId);
-        this.id = id;
-    }
+    @NotBlank
+    private String text;
+
+    @NotNull
+    private Long bookId;
 }

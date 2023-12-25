@@ -2,7 +2,9 @@ package ru.otus.spring.converter;
 
 import org.springframework.stereotype.Component;
 import ru.otus.spring.data.domain.Genre;
+import ru.otus.spring.dto.genre.GenreCreateDto;
 import ru.otus.spring.dto.genre.GenreDto;
+import ru.otus.spring.dto.genre.GenreUpdateDto;
 
 @Component
 public class GenreMapper {
@@ -14,10 +16,13 @@ public class GenreMapper {
         return genreDto;
     }
 
-    public Genre toEntity(GenreDto genreDto) {
+    public Genre toEntity(GenreCreateDto genreCreateDtoDto) {
         Genre genre = new Genre();
-        genre.setId(genreDto.getId());
-        genre.setName(genreDto.getName());
+        genre.setName(genreCreateDtoDto.getName());
         return genre;
+    }
+
+    public void copy(GenreUpdateDto genreUpdateDto, Genre existingGenre) {
+        existingGenre.setName(genreUpdateDto.getName());
     }
 }

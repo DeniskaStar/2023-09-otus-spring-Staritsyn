@@ -6,6 +6,7 @@ import ru.otus.spring.data.domain.Book;
 import ru.otus.spring.data.domain.Comment;
 import ru.otus.spring.dto.comment.CommentCreateDto;
 import ru.otus.spring.dto.comment.CommentDto;
+import ru.otus.spring.dto.comment.CommentUpdateDto;
 
 @RequiredArgsConstructor
 @Component
@@ -23,5 +24,9 @@ public class CommentMapper {
         comment.setText(commentCreateDto.getText());
         comment.setBook(book);
         return comment;
+    }
+
+    public void copy(CommentUpdateDto commentUpdateDto, Comment existingComment) {
+        existingComment.setText(commentUpdateDto.getText());
     }
 }
