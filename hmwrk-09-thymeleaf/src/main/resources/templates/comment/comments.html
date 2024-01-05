@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Book comments</title>
+</head>
+<body>
+<p th:text="|${book.title}|"></p>
+
+<div th:each="comment : ${comments}"
+     th:text="${comment.text}">
+</div>
+
+<!--Добавление комментария-->
+<form th:action="@{/comments}" th:object="${newComment}" method="post">
+    <div>
+        <label for="title">Введите комментарий</label>
+        <input id="title" type="text" th:field="*{text}">
+        <span style="color:red" th:if="${#fields.hasErrors('text')}" th:errors="*{text}">Comment error</span>
+    </div>
+    <input type="hidden" th:name="bookId" th:value="${book.id}">
+    <button type="submit">Добавить комментарий</button>
+</form>
+
+<!--вернуться на главную-->
+<form th:action="@{/books}" method="get">
+    <button type="submit">Вернуться на главную</button>
+</form>
+
+</body>
+</html>
